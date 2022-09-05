@@ -1,14 +1,17 @@
 ## 基础算法
 目录
 
-| 算法    | 代码            | 题目                                                                                                              |
-|-------|---------------|:----------------------------------------------------------------------------------------------------------------|
-| 快排    | [快排](#快排)     | [acwing785](https://www.acwing.com/problem/content/787/)                                                        |
-| 归并排序  | [归并排序](#归并排序) | [acwing787](https://www.acwing.com/problem/content/description/789/)                                            | 
-| 整数二分  | [二分](#二分)     | [acwing 791](https://www.acwing.com/problem/content/791/), [leetcode求平方根](https://leetcode.cn/problems/jJ0w9p/) |
-| 浮点二分  | [浮点二分](#浮点二分) | [acwing 791](https://www.acwing.com/problem/content/791/)                                                       |
-| 高精度加法 |[高精度加法](#高精度加法)| [leetcode 451](https://leetcode.cn/problems/add-strings/)                                                       |
-| 高精度减法 |[高精度减法](#高精度减法)|[acwing 792](https://www.acwing.com/problem/content/description/794/)|
+| 算法    | 代码             | 题目                                                                                                                                                                                                                                                                                                       |
+|-------|----------------|:---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| 快排    | [快排](#快排)      | [acwing785](https://www.acwing.com/problem/content/787/)                                                                                                                                                                                                                                                 |
+| 归并排序  | [归并排序](#归并排序)  | [acwing787](https://www.acwing.com/problem/content/description/789/)                                                                                                                                                                                                                                     | 
+| 整数二分  | [二分](#二分)      | [acwing 791](https://www.acwing.com/problem/content/791/), [leetcode求平方根](https://leetcode.cn/problems/jJ0w9p/)                                                                                                                                                                                          |
+| 浮点二分  | [浮点二分](#浮点二分)  | [acwing 791](https://www.acwing.com/problem/content/791/)                                                                                                                                                                                                                                                |
+| 高精度加法 | [高精度加法](#高精度加法) | [leetcode 451](https://leetcode.cn/problems/add-strings/)                                                                                                                                                                                                                                                |
+| 高精度减法 | [高精度减法](#高精度减法) | [acwing 792](https://www.acwing.com/problem/content/description/794/)                                                                                                                                                                                                                                    |
+| 高精度乘法 |[高精度乘法](#高精度乘法)| [leetcode43](https://leetcode.cn/problems/multiply-strings/)                                                                                                                                                                                                                                             |
+| 前缀和   |[前缀和](#前缀和)| [acwing](https://www.acwing.com/problem/content/797/), [leetcode 560](https://leetcode.cn/problems/subarray-sum-equals-k/), [lc303](https://leetcode.cn/problems/range-sum-query-immutable/), [lc304](https://leetcode.cn/problems/range-sum-query-2d-immutable/)                                        |
+| 差分    |[差分](#差分)| [acwing](https://www.acwing.com/problem/content/799/), [lc1094](https://leetcode.cn/problems/car-pooling/), [1109](https://leetcode.cn/problems/corporate-flight-bookings/)                                                                                                                              |
 #### 快排
 ```c++
 //  快排
@@ -141,5 +144,81 @@ vector<int> sub( vector<int>&a, vector<int>&b){
     }
     while(ans.size() > 1 && ans.back() == 0) ans.pop_back();
     return ans;
+}
+```
+#### 高精度乘法
+```c++
+string multiply(string num1, string num2) {
+        if(num1 == "0" || num2 == "0") return "0";
+        int len1 = num1.size(), len2 = num2.size();
+        vector<int>vec(len1+len2, 0);
+        
+        for(int i = len1-1; i >= 0; i-- ){
+            for(int j = len2-1; j >= 0; j--){
+                int t = (num1[i]-'0')*(num2[j]-'0')+vec[i+j+1];
+                vec[i+j+1] = t%10;
+                vec[i+j] += t/10;
+            }
+        }
+        string ans;
+        for(auto num:vec){
+            ans.push_back(num+'0');
+        }
+        int i = 0;
+        while(ans[i]=='0') i++;
+        return ans.substr(i);
+    }
+```
+#### 前缀和
+```c++
+#include<iostream>
+using namespace std;
+const int N = 100010;
+int nums[N];
+int pre_sum[N];
+int main(){
+    int n, m;
+    scanf("%d%d",&n,&m);
+    for(int i = 0; i < n ;i++) scanf("%d", &nums[i]);
+    for(int i = 1; i <=n ;i++){
+        pre_sum[i] += nums[i-1]+pre_sum[i-1];
+    }
+    for(int i = 0; i < m; i++){
+        int l, r;
+        scanf("%d%d",&l,&r);
+        l--;r--;
+        printf("%d\n", pre_sum[r+1]-pre_sum[l]);
+    }
+    return 0;
+}
+
+```
+#### 差分
+```c++
+#include<iostream>
+using namespace std;
+const int N = 100010;
+int a[N],b[N];
+void insert(int l, int r, int val){
+    b[l] += val;
+    b[r+1] -= val;
+}
+int main(){
+    int n, m;
+    scanf("%d%d",&n,&m);
+    for(int i = 1; i <= n; i++) scanf("%d",&a[i]);
+    for(int i = 1; i <= n; i++) insert(i, i, a[i]);
+    
+    while(m--){
+        int l, r, c;
+        scanf("%d%d%d",&l,&r,&c);
+        insert(l, r, c);
+    }
+    int t = 0;
+    for(int i = 1; i <= n; i++){
+        t += b[i];
+        printf("%d ", t);
+    }
+    
 }
 ```
